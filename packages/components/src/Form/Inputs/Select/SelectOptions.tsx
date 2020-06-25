@@ -24,8 +24,10 @@
 
  */
 
+import { IconNames, iconNameList } from '@looker/icons'
 import React, { ReactNode, useContext, useMemo } from 'react'
 import styled from 'styled-components'
+import { Icon } from '../../../Icon'
 import { Box } from '../../../Layout'
 import { ListItem } from '../../../List'
 import { Heading, Paragraph } from '../../../Text'
@@ -45,6 +47,10 @@ export interface SelectOptionObject
   extends ComboboxOptionObject,
     Pick<ComboboxOptionIndicatorProps, 'indicator'> {
   description?: string | ReactNode
+  /**
+   * Display an icon to the left of the option in the list and in the input when the option is selected
+   */
+  icon?: IconNames | ReactNode
 }
 
 export interface SelectOptionGroupProps {
@@ -54,20 +60,32 @@ export interface SelectOptionGroupProps {
 
 export type SelectOptionProps = SelectOptionObject | SelectOptionGroupProps
 
+function isIconName(icon: SelectOptionObject['icon']): icon is IconNames {
+  return typeof icon === 'string' && iconNameList.includes(icon)
+}
+
+function getOptionsWithIconIndicator({ icon, ...option }: SelectOptionObject) {
+  const iconIndicator = isIconName(icon) ? <Icon name={icon} /> : icon
+  return {
+    indicator: iconIndicator,
+    ...option,
+  }
+}
+
 const renderOption = (
-  option: SelectOptionObject,
+  { description, ...option }: SelectOptionObject,
   index: number,
   scrollIntoView?: boolean
 ) => {
-  if (option.description) {
+  if (description) {
     return (
       <ComboboxOption
-        {...option}
+        {...getOptionsWithIconIndicator(option)}
         key={index}
         py="xxsmall"
         scrollIntoView={scrollIntoView}
       >
-        <SelectOptionWithDescription {...option} />
+        <SelectOptionWithDescription description={description} />
       </ComboboxOption>
     )
   }
@@ -75,19 +93,19 @@ const renderOption = (
 }
 
 const renderMultiOption = (
-  option: SelectOptionObject,
+  { description, ...option }: SelectOptionObject,
   index: number,
   scrollIntoView?: boolean
 ) => {
-  if (option.description) {
+  if (description) {
     return (
       <ComboboxMultiOption
-        {...option}
+        {...getOptionsWithIconIndicator(option)}
         key={index}
         py="xxsmall"
         scrollIntoView={scrollIntoView}
       >
-        <SelectOptionWithDescription {...option} />
+        <SelectOptionWithDescription description={description} />
       </ComboboxMultiOption>
     )
   }
@@ -96,7 +114,7 @@ const renderMultiOption = (
 
 export function SelectOptionWithDescription({
   description,
-}: SelectOptionObject) {
+}: Pick<SelectOptionObject, 'description'>) {
   return (
     <Box>
       <Heading fontSize="small" fontWeight="semiBold" pb="xxsmall">
