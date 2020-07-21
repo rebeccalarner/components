@@ -24,19 +24,7 @@
 
  */
 
-export * from './system'
-export * from './theme'
-export * from './GlobalStyle'
+import * as palette from './palette'
 
-export * from './legacy'
-
-// Useful external utilities
-export * from './utils/animations'
-export * from './utils/omit'
-export { generateThemeFromCoreColors } from './utils/theme'
-export {
-  intentUIBlend,
-  uiTransparencyBlend,
-  generateIntentShade,
-} from './utils/color/blend'
-export { generatePressed, generateInteractive } from './utils/color/stateful'
+export { palette }
+export * from './legacyTheme'
