@@ -24,9 +24,12 @@
 
  */
 
+import { CompatibleHTMLProps } from '@looker/design-tokens'
 import styled from 'styled-components'
+import React, { forwardRef, Ref } from 'react'
 import { inputHeight } from '../Form/Inputs/height'
-import { Chip } from '../Chip/Chip'
+import { chipStyle, ChipBaseProps } from '../Chip/Chip'
+import { useVisibleFocus, FocusVisibleProps } from '../utils'
 
 /**
    * Activates specialized styling Chip when used as a trigger for a Menu or Overlay
@@ -36,7 +39,25 @@ import { Chip } from '../Chip/Chip'
    *
 =   */
 
-export const ChipButton = styled(Chip).attrs({ role: 'button' })`
+export type ChipButtonProps = ChipBaseProps &
+  Omit<CompatibleHTMLProps<HTMLButtonElement>, 'type'>
+
+export const ChipButton = forwardRef(
+  (
+    { onBlur, onKeyDown, onKeyUp, ...props }: ChipButtonProps,
+    ref: Ref<HTMLButtonElement>
+  ) => {
+    const focusVisibleProps = useVisibleFocus({
+      onBlur,
+      onKeyDown,
+      onKeyUp,
+    })
+    return <ChipButtonStyle ref={ref} {...props} {...focusVisibleProps} />
+  }
+)
+
+export const ChipButtonStyle = styled.button<FocusVisibleProps>`
+  ${chipStyle}
   border: 1px solid ${({ theme }) => theme.colors.ui2};
   cursor: pointer;
   font-size: ${({ theme }) => theme.fontSizes.small};

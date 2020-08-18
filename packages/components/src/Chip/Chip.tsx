@@ -25,22 +25,22 @@
  */
 
 import { reset, CompatibleHTMLProps } from '@looker/design-tokens'
-import React, { ReactNode, forwardRef, Ref, useState } from 'react'
-import styled from 'styled-components'
+import React, { KeyboardEvent, ReactNode, forwardRef, Ref } from 'react'
+import styled, { css } from 'styled-components'
 import { IconButton } from '../Button/IconButton'
 import { Text, TextProps } from '../Text'
 import { TruncateProps, truncate } from '../Text/truncate'
+import { useWrapEvent, useVisibleFocus, FocusVisibleProps } from '../utils'
 
-export interface ChipProps
-  extends CompatibleHTMLProps<HTMLSpanElement>,
-    TruncateProps {
+export interface ChipBaseProps extends TruncateProps {
   children: ReactNode
   disabled?: boolean
-  focusVisible?: boolean
   onDelete?: () => void
 }
 
-const ChipStyle = styled.span<ChipProps>`
+export type ChipProps = ChipBaseProps & CompatibleHTMLProps<HTMLSpanElement>
+
+export const chipStyle = ({ focusVisible }: FocusVisibleProps) => css`
   ${reset}
 
   align-items: center;
@@ -66,14 +66,15 @@ const ChipStyle = styled.span<ChipProps>`
     outline: none;
   }
 
-  ${({ focusVisible, theme: { colors } }) =>
+  ${({ theme: { colors } }) =>
     focusVisible && `box-shadow: 0 0 0 1px ${colors.key};`}
 
   &:active {
     border-color: ${({ theme }) => theme.colors.key};
   }
 
-  &[disabled] {
+  &[disabled],
+  &[aria-disabled='true'] {
     background: ${({ theme }) => theme.colors.neutralAccent};
     color: ${({ theme }) => theme.colors.neutral};
 
@@ -83,7 +84,11 @@ const ChipStyle = styled.span<ChipProps>`
   }
 `
 
-const ChipLabel = styled(Text)<TextProps & TruncateProps>`
+const ChipStyle = styled.span<FocusVisibleProps>`
+  ${chipStyle}
+`
+
+export const ChipLabel = styled(Text)<TextProps & TruncateProps>`
   font-size: inherit;
   ${truncate}
 `
@@ -100,44 +105,31 @@ const ChipJSX = forwardRef((props: ChipProps, ref: Ref<HTMLSpanElement>) => {
     ...restProps
   } = props
 
-  const [isFocusVisible, setFocusVisible] = useState(false)
-
-  const handleOnKeyUp = (event: React.KeyboardEvent<HTMLSpanElement>) => {
-    setFocusVisible(true)
-    onKeyUp && onKeyUp(event)
-  }
-
-  const handleOnBlur = (event: React.FocusEvent<HTMLSpanElement>) => {
-    setFocusVisible(false)
-    onBlur && onBlur(event)
-  }
-
-  const handleOnKeyDown = (event: React.KeyboardEvent<HTMLSpanElement>) => {
-    setFocusVisible(false)
-    if (event.key === 'Backspace') {
-      onDelete && onDelete()
-    }
-    onKeyDown && onKeyDown(event)
-    setFocusVisible(false)
-  }
-
-  const handleDelete = () => {
+  function handleDelete() {
     if (!disabled) {
       onDelete && onDelete()
     }
-    setFocusVisible(false)
   }
+
+  function handleKeyDown(event: KeyboardEvent<HTMLSpanElement>) {
+    if (event.key === 'Backspace') {
+      onDelete && onDelete()
+    }
+  }
+
+  const focusVisibleProps = useVisibleFocus({
+    onBlur,
+    onKeyDown: useWrapEvent(handleKeyDown, onKeyDown),
+    onKeyUp,
+  })
 
   return (
     <ChipStyle
-      disabled={disabled}
-      focusVisible={isFocusVisible}
-      onBlur={handleOnBlur}
-      onKeyDown={handleOnKeyDown}
-      onKeyUp={handleOnKeyUp}
+      aria-disabled={disabled}
       ref={ref}
       tabIndex={disabled ? undefined : 0}
       {...restProps}
+      {...focusVisibleProps}
     >
       <ChipLabel truncate={truncate}>{children}</ChipLabel>
       {onDelete && !disabled && (

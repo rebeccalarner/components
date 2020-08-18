@@ -24,24 +24,43 @@
 
  */
 
-export * from './getWindowedListBoundaries'
-export * from './HoverDisclosure'
-export * from './moveFocus'
-export * from './undefinedCoalesce'
-export * from './useControlWarn'
-export * from './useReadOnlyWarn'
-export * from './useCallbackRef'
-export * from './useFocusTrap'
-export * from './useForkedRef'
-export * from './useGlobalHotkeys'
-export * from './useHovered'
-export * from './useID'
-export * from './useMouseDownClick'
-export * from './usePopper'
-export * from './useScrollLock'
-export * from './useToggle'
-export * from './useWrapEvent'
-export * from './useMeasuredElement'
-export * from './useMouseDragPosition'
-export * from './usePreviousValue'
-export * from './useVisibleFocus'
+import { reset, CompatibleHTMLProps } from '@looker/design-tokens'
+import React, {
+  KeyboardEvent,
+  ReactNode,
+  forwardRef,
+  Ref,
+  useState,
+} from 'react'
+import { useWrapEvent } from '../utils'
+
+export interface FocusVisibleProps {
+  focusVisible: boolean
+}
+
+export function useVisibleFocus({
+  onBlur,
+  onKeyDown,
+  onKeyUp,
+}: Pick<CompatibleHTMLProps<HTMLElement>, 'onKeyUp' | 'onKeyDown' | 'onBlur'>) {
+  const [focusVisible, setFocusVisible] = useState(false)
+
+  function handleKeyUp() {
+    setFocusVisible(true)
+  }
+
+  function handleBlur() {
+    setFocusVisible(false)
+  }
+
+  function handleKeyDown() {
+    setFocusVisible(false)
+  }
+
+  return {
+    focusVisible,
+    onBlur: useWrapEvent(handleBlur, onBlur),
+    onKeyDown: useWrapEvent(handleKeyDown, onKeyDown),
+    onKeyUp: useWrapEvent(handleKeyUp, onKeyUp),
+  }
+}
