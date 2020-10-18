@@ -16,7 +16,7 @@
   "dependencies": {
     "@looker/components": "^0.9.19",
     "core-js": "^3.6.5",
-    "react": "^16.13.1",
+    "react": "^16.14.0",
     "react-dom": "^16.13.1",
     "react-is": "^16.13.1",
     "styled-components": "^4.4.1"
