@@ -88,7 +88,7 @@
     "react-test-renderer": "^16.14.0",
     "styled-components": "^5.2.1",
     "typescript": "4.1.2",
-    "webpack": "^4.44.2"
+    "webpack": "^5.11.0"
   },
   "resolutions": {
     "eslint-plugin-react-hooks": "4.2.0",
