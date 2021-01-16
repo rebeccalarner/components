@@ -26,7 +26,7 @@
   "devDependencies": {
     "@babel/core": "7.12.10",
     "@looker/components-providers": "*",
-    "@storybook/addon-essentials": "^6.1.10",
+    "@storybook/addon-essentials": "^6.1.14",
     "@storybook/addon-storyshots": "^6.1.10",
     "babel-loader": "^8.2.2"
   }
