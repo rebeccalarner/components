@@ -28,7 +28,7 @@
     "d3-hsv": "^0.1.0",
     "date-fns": "^2.16.1",
     "date-fns-tz": "^1.0.12",
-    "hotkeys-js": "^3.8.1",
+    "hotkeys-js": "^3.8.5",
     "lodash": "^4.17.20",
     "react-day-picker": "^7.4.8",
     "react-hotkeys-hook": "^2.4.0",
