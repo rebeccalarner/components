@@ -18,7 +18,7 @@
   "dependencies": {
     "@looker/design-tokens": "^0.9.27",
     "lodash": "^4.17.20",
-    "tabbable": "^5.1.4"
+    "tabbable": "^5.2.0"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.165",
